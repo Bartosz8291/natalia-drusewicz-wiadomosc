@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wideo</title>
+    <title>Download Video</title>
     <meta name="description" content="TO JEST WIDEO">
 </head>
 <body>
@@ -11,5 +11,39 @@
         <source src="message1.mp4" type="video/mp4">
         Twoja przeglądarka nie obsługuje odtwarzacza wideo.
     </video>
+    
+    <button onclick="downloadVideo()">Pobierz jako ZIP</button>
+
+    <script>
+        function downloadVideo() {
+            var fileUrl = 'message1.mp4'; // Adres URL pliku wideo
+            var zipFileName = '1.zip'; // Nazwa pliku ZIP
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', fileUrl, true);
+            xhr.responseType = 'blob';
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var blob = xhr.response;
+
+                    // Tworzenie obiektu do zapisu do archiwum ZIP
+                    var zip = new JSZip();
+                    zip.file(fileUrl.split('/').pop(), blob);
+
+                    // Generowanie archiwum ZIP
+                    zip.generateAsync({type:"blob"}).then(function(content) {
+                        // Tworzenie linku do pobrania archiwum
+                        var a = document.createElement('a');
+                        a.href = URL.createObjectURL(content);
+                        a.download = zipFileName;
+                        a.click();
+                    });
+                }
+            };
+
+            xhr.send();
+        }
+    </script>
 </body>
 </html>
